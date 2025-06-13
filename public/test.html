@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+      perspective: 800px;
+    }
+
+    .room {
+      width: 500px;
+      height: 500px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-style: preserve-3d;
+      transform: translate(-50%, -50%) rotateY(0deg);
+    }
+
+    .wall {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: rgba(0, 100, 200, 0.5);
+      border: 2px solid #fff;
+      backface-visibility: hidden; /* 필요 시 */
+    }
+
+    .front  { transform: translateZ(-250px) rotateY(180deg); }
+    .back   { transform: translateZ(250px); }
+    .left   { transform: rotateY(90deg) translateZ(250px); }
+    .right  { transform: rotateY(-90deg) translateZ(250px); }
+    .top    { transform: rotateX(90deg) translateZ(250px); }
+    .bottom { transform: rotateX(-90deg) translateZ(250px); }
+
+    /* 시점 회전 애니메이션 */
+    @keyframes lookAround {
+      0%   { transform: translate(-50%, -50%) rotateY(0deg); }
+      50%  { transform: translate(-50%, -50%) rotateY(30deg) rotateX(10deg); }
+      100% { transform: translate(-50%, -50%) rotateY(0deg); }
+    }
+
+    .room {
+      animation: lookAround 10s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="room">
+    <div class="wall front"></div>
+    <div class="wall back"></div>
+    <div class="wall left"></div>
+    <div class="wall right"></div>
+    <div class="wall top"></div>
+    <div class="wall bottom"></div>
+  </div>
+</body>
+</html>
