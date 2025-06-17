@@ -74,20 +74,23 @@ const pageMaterials = [
 type PageProps = {
   number: number;
   front: {
-          image: Array<Image>,
+          image: Array<Image> | null,
           lines: Array<Text> | null
       };
   back: {
-          image: Array<Image>,
+          image: Array<Image> | null,
           lines: Array<Text> | null
       };
   [key: string]: any;
 };
 
 pages.forEach((page) => {
-    useTexture.preload(`/books/${page.front}.jpg`);
-    useTexture.preload(`/books/${page.back}.jpg`);
-    useTexture.preload(`/books/book-cover-roughness.jpg`);
+    page.front.image?.forEach((data) =>{
+        useTexture.preload(`/books/${data.name}`);
+    })
+    page.back.image?.forEach((data) =>{
+        useTexture.preload(`/books/${data.name}`);
+    })
 })
 
 interface ImageData {
@@ -100,12 +103,12 @@ interface ImageData {
 
 export function createTexture(
   lines:  Text[] | null,
-  images: ImageData[] = [],          // 그림이 없어도 빈 배열
+  images: ImageData[] | null,          // 그림이 없어도 빈 배열
   options?: { bgColor?: string } // 배경색 커스터마이즈
 ): THREE.CanvasTexture {
   const canvas  = document.createElement("canvas");
-  canvas.width  = 1024;
-  canvas.height = 2048;
+  canvas.width  = 1280;
+  canvas.height = 1710;
   const ctx = canvas.getContext("2d")!;
 
   /* 1) 배경 ----------------------------------------------------------------*/
@@ -113,8 +116,9 @@ export function createTexture(
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   /* 2) 이미지 --------------------------------------------------------------*/
-  images.forEach(img => {
-    ctx.drawImage(
+
+  images?.forEach(img => {
+        ctx.drawImage(
       img.source,
       img.x * canvas.width,
       img.y * canvas.height,
@@ -124,16 +128,23 @@ export function createTexture(
   });
 
   /* 3) 텍스트 --------------------------------------------------------------*/
-  lines?.forEach(line => {
-    ctx.fillStyle   = line.color;
-    ctx.font        = line.font || `${line.size}px sans-serif`;
-    ctx.textBaseline = "top";
+lines?.forEach(line => {
+  ctx.fillStyle = line.color;
+  ctx.font      = line.font || `${line.weight} ${line.size}px sans-serif`;
+  ctx.textBaseline = "top";
+
+  // ① 줄바꿈 기준으로 자르기
+  const rows = line.text.split(/\r?\n/);         // CRLF·LF 모두 대응
+
+  // ② 한 줄씩 그리기
+  rows.forEach((row, i) => {
     ctx.fillText(
-      line.text,
-      line.x * canvas.width,
-      line.y * canvas.height
+      row,
+      (line.x / 100) * canvas.width,
+      (line.y / 100) * canvas.height + i * line.size * 1.2  // line‑height 1.2배 예시
     );
   });
+});
 
   /* 4) Three.js Texture ----------------------------------------------------*/
   const tex = new THREE.CanvasTexture(canvas);
@@ -144,17 +155,23 @@ export function createTexture(
 
 const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
     // ① URL 배열 분리
-    const frontUrls = front.image.map(img => `/books/${img.name}.jpg`);
-    const backUrls  = back.image.map(img  => `/books/${img.name}.jpg`);
+    const frontUrls = front.image?.map(img => `/books/${img.name}`);
+    const backUrls  = back.image?.map(img  => `/books/${img.name}`);
 
     // ② 각각 useTexture
-    const frontTextures = useTexture(frontUrls); // ← 배열(앞면 전용)
-    const backTextures  = useTexture(backUrls);  // ← 배열(뒷면 전용)
+    let frontTextures = null;
+    let backTextures = null;
+    if(frontUrls){
+       frontTextures = useTexture(frontUrls);
+    }
+    if(backUrls){
+        backTextures  = useTexture(backUrls);
+    }
 
-    frontTextures.map((value: THREE.Texture) => {
+    frontTextures?.map((value: THREE.Texture) => {
         value.colorSpace = THREE.SRGBColorSpace
     })
-    backTextures.map((value: THREE.Texture) => {
+    backTextures?.map((value: THREE.Texture) => {
         value.colorSpace = THREE.SRGBColorSpace
     })
     const group = useRef<THREE.Group>(null);
@@ -180,24 +197,31 @@ const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
 
         const frontImages: ImageData[] = []
         const backImages: ImageData[] = [];
-        for(let i = 0; i< front.image.length; i++){
-            frontImages.push({
-                source: frontTextures[i].image as CanvasImageSource,
-                x: front.image[i].x,
-                y: front.image[i].y,
-                width: front.image[i].width / 100,
-                height: front.image[i].height / 100
-            })
+        if(front.image && frontTextures){
+            for(let i = 0; i < front.image.length; i++){
+                frontImages.push({
+                    source: frontTextures[i].image as CanvasImageSource,
+                    x: front.image[i].x / 100,
+                    y: front.image[i].y / 100,
+                    width: front.image[i].width / 100,
+                    height: front.image[i].height / 100
+                })
+            }
         }
-        for(let i = 0; i< back.image.length; i++){
-            backImages.push({
-                source: backTextures[i].image as CanvasImageSource,
-                x: back.image[i].x,
-                y: back.image[i].y,
-                width: back.image[i].width / 100,
-                height: back.image[i].height / 100
-            })
+        if(back.image && backTextures){
+            for(let i = 0; i< back.image.length; i++){
+                backImages.push({
+                    source: backTextures[i].image as CanvasImageSource,
+                    x: back.image[i].x / 100,
+                    y: back.image[i].y / 100,
+                    width: back.image[i].width / 100,
+                    height: back.image[i].height / 100
+                })
+            }
         }
+
+        console.log(number, 'front ', frontImages)
+        console.log(number, 'back', backImages)
 
         const picture = createTexture(front.lines, frontImages);
         const picture2 = createTexture(back.lines, backImages);
@@ -349,7 +373,15 @@ export default function BookPage() {
         <>
             <Book />
             <OrbitControls />
-            <Environment preset="studio"></Environment>
+            <directionalLight
+                position={[0, 1, 1]}
+                intensity={3.5}
+            />
+            
+            <directionalLight
+                position={[0, 1, -1]}
+                intensity={2.5}
+            />
             <directionalLight
                 position={[2, 5, 2]}
                 intensity={2.5}
