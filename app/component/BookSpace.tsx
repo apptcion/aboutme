@@ -1,5 +1,5 @@
 import { Environment, OrbitControls, useTexture } from "@react-three/drei";
-import { pageAtom, pages } from "./UI";
+import { pageAtom, pages, Text, Page as PageStruct, Image } from "./UI";
 import * as THREE from 'three'
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -73,8 +73,14 @@ const pageMaterials = [
 
 type PageProps = {
   number: number;
-  front?: any;
-  back?: any;
+  front: {
+          image: Array<Image>,
+          lines: Array<Text> | null
+      };
+  back: {
+          image: Array<Image>,
+          lines: Array<Text> | null
+      };
   [key: string]: any;
 };
 
@@ -84,15 +90,73 @@ pages.forEach((page) => {
     useTexture.preload(`/books/book-cover-roughness.jpg`);
 })
 
-const Page = ({number, front, back, page, opened, bookClosed, ...props}: PageProps) => {
-    const [picture, picture2, pictureRoughness] = useTexture([
-        `/books/${front}.jpg`,
-        `/books/${back}.jpg`,
-        // ...(number === 0 || number === pages.length - 1
-        //     ? [`/textures/book-cover-roughness.jpg`]
-        //     : [])
-    ]);
-    picture.colorSpace = picture2.colorSpace = THREE.SRGBColorSpace;
+interface ImageData {
+    source: CanvasImageSource,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+}
+
+export function createTexture(
+  lines:  Text[] | null,
+  images: ImageData[] = [],          // 그림이 없어도 빈 배열
+  options?: { bgColor?: string } // 배경색 커스터마이즈
+): THREE.CanvasTexture {
+  const canvas  = document.createElement("canvas");
+  canvas.width  = 1024;
+  canvas.height = 2048;
+  const ctx = canvas.getContext("2d")!;
+
+  /* 1) 배경 ----------------------------------------------------------------*/
+  ctx.fillStyle = options?.bgColor ?? "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  /* 2) 이미지 --------------------------------------------------------------*/
+  images.forEach(img => {
+    ctx.drawImage(
+      img.source,
+      img.x * canvas.width,
+      img.y * canvas.height,
+      img.width  * canvas.width,
+      img.height * canvas.height
+    );
+  });
+
+  /* 3) 텍스트 --------------------------------------------------------------*/
+  lines?.forEach(line => {
+    ctx.fillStyle   = line.color;
+    ctx.font        = line.font || `${line.size}px sans-serif`;
+    ctx.textBaseline = "top";
+    ctx.fillText(
+      line.text,
+      line.x * canvas.width,
+      line.y * canvas.height
+    );
+  });
+
+  /* 4) Three.js Texture ----------------------------------------------------*/
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace  = THREE.SRGBColorSpace;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
+    // ① URL 배열 분리
+    const frontUrls = front.image.map(img => `/books/${img.name}.jpg`);
+    const backUrls  = back.image.map(img  => `/books/${img.name}.jpg`);
+
+    // ② 각각 useTexture
+    const frontTextures = useTexture(frontUrls); // ← 배열(앞면 전용)
+    const backTextures  = useTexture(backUrls);  // ← 배열(뒷면 전용)
+
+    frontTextures.map((value: THREE.Texture) => {
+        value.colorSpace = THREE.SRGBColorSpace
+    })
+    backTextures.map((value: THREE.Texture) => {
+        value.colorSpace = THREE.SRGBColorSpace
+    })
     const group = useRef<THREE.Group>(null);
     const turnedAt = useRef(0);
     const lastOpened = useRef(opened);
@@ -114,29 +178,40 @@ const Page = ({number, front, back, page, opened, bookClosed, ...props}: PagePro
             }
         }
 
+        const frontImages: ImageData[] = []
+        const backImages: ImageData[] = [];
+        for(let i = 0; i< front.image.length; i++){
+            frontImages.push({
+                source: frontTextures[i].image as CanvasImageSource,
+                x: front.image[i].x,
+                y: front.image[i].y,
+                width: front.image[i].width / 100,
+                height: front.image[i].height / 100
+            })
+        }
+        for(let i = 0; i< back.image.length; i++){
+            backImages.push({
+                source: backTextures[i].image as CanvasImageSource,
+                x: back.image[i].x,
+                y: back.image[i].y,
+                width: back.image[i].width / 100,
+                height: back.image[i].height / 100
+            })
+        }
+
+        const picture = createTexture(front.lines, frontImages);
+        const picture2 = createTexture(back.lines, backImages);
         const skeleton = new THREE.Skeleton(bones);
         const materials = [...pageMaterials, 
             new THREE.MeshStandardMaterial({
                 color: whiteColor,
                 map: picture,
-                ...(number === 0
-                    ? {
-                        roughnessMap: pictureRoughness,
-                      }
-                    : {
-                        roughness: 1
-                    }),
+                roughness: 1
             }),
             new THREE.MeshStandardMaterial({
                 color: whiteColor,
                 map: picture2,
-                ...(number === pages.length - 1
-                    ? {
-                        roughnessMap: pictureRoughness,
-                      }
-                    : {
-                        roughness: 1
-                    })
+                roughness: 1
             })
         ];
         const mesh = new THREE.SkinnedMesh(pageGeometry, materials);
@@ -147,7 +222,9 @@ const Page = ({number, front, back, page, opened, bookClosed, ...props}: PagePro
         mesh.bind(skeleton);
         return mesh;
 
-    }, []);
+    }, [
+        frontTextures, backTextures,
+        front.image, back.image]);
 
     // useHelper(
     //   skinnedMeshRef as unknown as React.MutableRefObject<THREE.Object3D>,
@@ -219,12 +296,11 @@ const Page = ({number, front, back, page, opened, bookClosed, ...props}: PagePro
     const [_, setPage] = useAtom(pageAtom);
 
     return (
-        <group {...props} ref={group}
+        <group ref={group}
         onClick={(e) => {
             e.stopPropagation()
             setPage(opened ? number : number +1);
-        }}
-        >
+        }} >
             <primitive
                 object={manualSkinnedMesh}
                 position-z={-number * PAGE_DEPTH + page* PAGE_DEPTH}
