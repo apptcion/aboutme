@@ -333,7 +333,7 @@ export const Texts:Array<Array<Array<Text>>> = [
         ]
     ]
 ]
-export const pageAtom = atom(4)
+export const pageAtom = atom(0)
 
 export const pages: Array<Page> = [
     {
