@@ -375,7 +375,7 @@ export default function BookPage() {
             <OrbitControls />
             <directionalLight
                 position={[0, 1, 1]}
-                intensity={3.5}
+                intensity={5}
             />
             
             <directionalLight
