@@ -1,5 +1,6 @@
 import { atom, useAtom } from 'jotai';
 import styles from '../page.module.css'
+import { useEffect, useRef } from 'react';
 
 
 export interface Image{
@@ -57,7 +58,7 @@ const dimifriend_bg = {name: "dimifriend_bg.png", x: 0, y: 0, width: 100, height
 const dimifriend_bg2 = {name: "dimifriend_bg2.png", x: 0, y: 0, width: 100, height: 100}
 const dimifriend1 = {name: "dimifriend1.png", x: 0, y: 0, width: 100, height: 100}
 
-const chess_logo = {name: "chess_logo.png", x: 27, y: 12, width: 32, height: 24}
+const chess_logo = {name: "chess_logo.png", x: 27, y: 11, width: 32, height: 24}
 const chess_bg = {name: "3dchess_bg.png", x: 0, y: 0, width: 100, height: 100}
 const chess_bg2 = {name: "3dchess_bg2.png", x: 0, y: 0, width: 100, height: 100}
 const chess_head = {name: "chess_head.png", x: 0, y: 0, width: 100, height: 10}
@@ -289,23 +290,23 @@ export const Texts:Array<Array<Array<Text>>> = [
         [ // PAGE 7 (3d Chess)
             {
                 text: 'PROJECT', color: '#230133',
-                x: 13, y: 37,
+                x: 13, y: 35,
                 font: '', size: 80, weight: 600
             },
             {
                 text: 'personal project', color: '#797979',
-                x: 9.5, y: 42,
+                x: 9.5, y: 40,
                 font: '', size: 50, weight: 500
             },
             {
                 text: '3D Chess', color: '#5a2c6f',
-                x: 44, y: 37.45,
+                x: 44, y: 35.45,
                 font: '', size: 120, weight: 600
             },
             {
                 text: `3d chess는 역량 상승을 위해\n개인적으로 진행했던 프로젝트로,`, color: 'black',
-                x: 9.5, y: 50,
-                font: '', size: 40, weight: 500
+                x: 9.5, y: 48,
+                font: '', size: 45, weight: 500
             },
             {
                 text: `우주를 배경으로 진행되는 온라인 3차원 체스입니다.`, color: 'black',
@@ -321,7 +322,12 @@ export const Texts:Array<Array<Array<Text>>> = [
                 text: `웹 상에서 3D를 구현하기 위해\nThree.js를 사용하고, socket.io를 사용해\n온라인으로 플레이 가능하도록 했습니다.`, color: 'black',
                 x: 9.5, y: 73,
                 font: '', size: 40, weight: 500
-            }
+            },
+            {
+                text: `개인 프로젝트를 진행하면서 기획과 디자인 분야에 대한\n견해도 넓힐 수 있었고, Three.js라는 새로운 도구를 익히며\n개발역량도 기를 수 있어서 가치있는 경험이었습니다.`, color: 'black',
+                x: 9.5, y: 84,
+                font: '', size: 40, weight: 500
+            },
         ]
     ],
     [
@@ -373,7 +379,7 @@ export const pages: Array<Page> = [
             lines: Texts[3][0],
         },
         back : { // 7 PAGE (3d chess)
-            image: [chess_bg, chess_logo, {name: verticalLine, x: 42, y: 37, width: 0.5, height: 8.3}],
+            image: [chess_bg, chess_logo, {name: verticalLine, x: 42, y: 35, width: 0.5, height: 8.3}],
             lines: Texts[3][1]
         }
     },
@@ -393,23 +399,22 @@ export default function UI(){
 
     const [page, setPage] = useAtom(pageAtom);
 
+
     return (
         <div className={styles.UI}>
-            {pages.map((_, index) => (
-                <div key={index} className={
-                    `${styles.page_num} ${page === index ? styles.selected : ''}`}
-                onClick={() => {
-                    setPage(index)
-                }}>
-                    {index === 0 ? 'Cover' : `${pageName[index-1]}`}
+            <div className={styles.menu_wrap}>
+                {pages.map((_, index) => (
+                    <div key={index} className={ `${styles.page_num} ${page === index ? styles.selected : ''}`}
+                    onClick={() => { setPage(index) }}>
+                        {index === 0 ? 'Cover' : `${pageName[index-1]}`}
+                    </div>
+                ))}
+                <div className={`${styles.page_num} ${page === pages.length ? styles.selected : ''}`}
+                    onClick={() => { setPage(pages.length) }}>
+                        BACK COVER
                 </div>
-            ))}
-            <div className={`${styles.page_num} ${page === pages.length ? styles.selected : ''}`}
-            onClick={() => {
-                setPage(pages.length)
-            }}>
-                BACK COVER
             </div>
+
         </div>
     )
 }

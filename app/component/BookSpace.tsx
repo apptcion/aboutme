@@ -220,9 +220,6 @@ const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
             }
         }
 
-        console.log(number, 'front ', frontImages)
-        console.log(number, 'back', backImages)
-
         const picture = createTexture(front.lines, frontImages);
         const picture2 = createTexture(back.lines, backImages);
         const skeleton = new THREE.Skeleton(bones);

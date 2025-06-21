@@ -2,14 +2,16 @@
 import { Canvas } from 'react-three-fiber';
 import styles from './page.module.css';
 import {Suspense, useState } from 'react';
-import Present from './component/present';
+import Past from './component/past';
 import BookPage from './component/BookSpace'
 import UI from './component/UI';
 import { Loader } from '@react-three/drei';
+import Image from 'next/image';
+import Future from './component/future';
 
-function Past() {
+function Present() {
   return (
-    <div className={`${styles.past} ${styles.content}`}>
+    <div className={`${styles.present} ${styles.content}`}>
       <div className={styles.bg } />
       <UI />
       <Loader />
@@ -24,13 +26,6 @@ function Past() {
   )
 }
 
-function Future() {
-  return (
-    <div className={`${styles.future} ${styles.content}`}>
-      <p>future</p>
-    </div>
-  )
-}
 
 export default function Page() {
 
@@ -41,7 +36,7 @@ export default function Page() {
       <header className={styles.header}>
         <div className={styles.menu_container}>
           {['Past', 'Present', 'Future'].map((title, index) => (
-            <div className={styles.menu} key={index} onClick={() => {
+            <div className={`${styles.menu} ${nowPage == index ? styles.selected : ''}`} key={index} onClick={() => {
               setNowPage(index);
             }}>{title}</div>
           ))}
