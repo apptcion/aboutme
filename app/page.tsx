@@ -35,7 +35,7 @@ export default function Page() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.menu_container}>
-          {['Past', 'Present', 'Future'].map((title, index) => (
+          {['My Store', 'Projects', 'Skill'].map((title, index) => (
             <div className={`${styles.menu} ${nowPage == index ? styles.selected : ''}`} key={index} onClick={() => {
               setNowPage(index);
             }}>{title}</div>
