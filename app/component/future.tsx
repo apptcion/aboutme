@@ -326,7 +326,7 @@ const Frameworks: Array<Skill> = [
 
 const Other: Array<Skill> = [
     //mongoDB
-    {name: "mongoDB", url: "mongoDB2.svg",
+    {name: "mongoDB", url: "mongoDB.svg",
     description: "mongoDB는 대표적인 NoSQL 데이터베이스입니다.\n"+
     "저장할 수 있는 데이터 타입이 유연하다는 장점과,\n다른 편리한 기능 덕분에"+
     " 다양한 곳에 많이 사용됩니다.",
@@ -357,7 +357,7 @@ const Other: Array<Skill> = [
     proficiency:50, theme: '#9857F2', graphColor: '#F26B5E'},
     // , #1DB6F2, #07D977, #F2441D, #F26B5E
     //Linux
-    {name: "Linux", url: "Linux2.png",
+    {name: "Linux", url: "Linux.png",
     description: "Linux는 대부분의 서버에서 사용하는 운영체제입니다.\n"+
     "오픈소스로 가격이 무료이며, 여러 유저가 동시에\n접속 할 수 있기 때문에 "+
     "서버로 매우 적합합니다.",
