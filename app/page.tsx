@@ -9,9 +9,6 @@ function GlobalLoader() {
   const { progress } = useProgress();
   return (
     <div className={styles.progress_wrap}>
-      <div className={styles.progress_track}>
-        <div className={styles.progress_bar} />
-      </div>
       <div className={styles.progress}>{progress.toFixed(0)}%</div>
     </div>
   )
