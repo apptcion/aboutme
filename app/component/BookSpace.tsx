@@ -3,7 +3,7 @@ import { pageAtom, pages, Text, Page as PageStruct, Image } from "./UI";
 import * as THREE from 'three'
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useFrame } from "react-three-fiber";
+import { useFrame } from "@react-three/fiber";
 import { degToRad } from "three/src/math/MathUtils.js";
 import { easing } from "maath";
 
@@ -83,15 +83,6 @@ type PageProps = {
       };
   [key: string]: any;
 };
-
-pages.forEach((page) => {
-    page.front.image?.forEach((data) =>{
-        useTexture.preload(`/books/${data.name}`);
-    })
-    page.back.image?.forEach((data) =>{
-        useTexture.preload(`/books/${data.name}`);
-    })
-})
 
 interface ImageData {
     source: CanvasImageSource,
@@ -247,11 +238,6 @@ const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
         frontTextures, backTextures,
         front.image, back.image]);
 
-    // useHelper(
-    //   skinnedMeshRef as unknown as React.MutableRefObject<THREE.Object3D>,
-    //   THREE.SkeletonHelper
-    // );
-
     useFrame((_, delta) => {
         if (skinnedMeshRef.current) {
 
@@ -318,10 +304,10 @@ const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
 
     return (
         <group ref={group}
-        onClick={(e) => {
-            e.stopPropagation()
-            setPage(opened ? number : number +1);
-        }} >
+            onClick={(e) => {
+                e.stopPropagation()
+                setPage(opened ? number : number +1);
+            }} >
             <primitive
                 object={manualSkinnedMesh}
                 position-z={-number * PAGE_DEPTH + page* PAGE_DEPTH}

@@ -212,7 +212,7 @@ const LangUnitCard: Unit = {
 
 const FrameworkUnitCard: Unit = {
   title: 'Framework/libraries',
-  content: `진정한 개발자라면`,
+  content: `진짜 개발의 시작`,
   theme: '#de8cff',
   url: ''
 }
