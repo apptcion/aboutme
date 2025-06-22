@@ -9,6 +9,21 @@
   left: 0;
 }
 
+.progress_wrap{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black
+}
+
+.progress{
+  color: white;
+  font-size: 3vw;
+  font-weight: bold;
+}
+
 .header{
   position: fixed;
   top: 0;
