@@ -4,14 +4,9 @@ import Past    from '../component/Past';
 import Present from '../component/Present';
 import Future  from '../component/Future';
 import styles  from '../page.module.css';
-import { invalidate } from '@react-three/fiber';
 
 export default function Main() {
   const [nowPage, setNowPage] = useState(0);
-
-  useEffect(() => {
-    if(nowPage === 1) invalidate();
-  }, [nowPage])
 
   return (
     <div className={styles.page}>

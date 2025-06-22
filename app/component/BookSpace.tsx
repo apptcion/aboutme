@@ -1,11 +1,13 @@
 import { Environment, OrbitControls, useTexture } from "@react-three/drei";
-import { pageAtom, pages, Text, Page as PageStruct, Image } from "./UI";
+import { pageAtom, pages, Text, Image } from "./UI";
 import * as THREE from 'three'
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { degToRad } from "three/src/math/MathUtils.js";
 import { easing } from "maath";
+import createTexture from "../util/createTexture";
+import { useBookTextures } from "./bookTextures";
 
 const easingFactor = 0.5;
 const easingFactorFold = 0.3;
@@ -90,58 +92,6 @@ interface ImageData {
     y: number,
     width: number,
     height: number
-}
-
-export function createTexture(
-  lines:  Text[] | null,
-  images: ImageData[] | null,          // 그림이 없어도 빈 배열
-  options?: { bgColor?: string } // 배경색 커스터마이즈
-): THREE.CanvasTexture {
-  const canvas  = document.createElement("canvas");
-  canvas.width  = 1280;
-  canvas.height = 1710;
-  const ctx = canvas.getContext("2d")!;
-
-  /* 1) 배경 ----------------------------------------------------------------*/
-  ctx.fillStyle = options?.bgColor ?? "#fff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  /* 2) 이미지 --------------------------------------------------------------*/
-
-  images?.forEach(img => {
-        ctx.drawImage(
-      img.source,
-      img.x * canvas.width,
-      img.y * canvas.height,
-      img.width  * canvas.width,
-      img.height * canvas.height
-    );
-  });
-
-  /* 3) 텍스트 --------------------------------------------------------------*/
-lines?.forEach(line => {
-  ctx.fillStyle = line.color;
-  ctx.font      = line.font || `${line.weight} ${line.size}px sans-serif`;
-  ctx.textBaseline = "top";
-
-  // ① 줄바꿈 기준으로 자르기
-  const rows = line.text.split(/\r?\n/);         // CRLF·LF 모두 대응
-
-  // ② 한 줄씩 그리기
-  rows.forEach((row, i) => {
-    ctx.fillText(
-      row,
-      (line.x / 100) * canvas.width,
-      (line.y / 100) * canvas.height + i * line.size * 1.2  // line‑height 1.2배 예시
-    );
-  });
-});
-
-  /* 4) Three.js Texture ----------------------------------------------------*/
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace  = THREE.SRGBColorSpace;
-  tex.needsUpdate = true;
-  return tex;
 }
 
 const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
@@ -320,6 +270,7 @@ const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
 function Book(){
     const [page] = useAtom(pageAtom)
     const [delayedPage, setDelayedPage] = useState(page);
+    const texures = useBookTextures(pages);
 
     useEffect(() => {
         if(page === delayedPage) return;
