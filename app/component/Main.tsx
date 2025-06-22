@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Past    from '../component/Past';
 import Present from '../component/Present';
 import Future  from '../component/Future';

@@ -1,10 +1,9 @@
 import { Canvas } from "@react-three/fiber";
-import UI, { pages } from "./UI";
+import UI from "./UI";
 import styles from '../page.module.css'
 import { Suspense } from "react";
 import BookPage from "./BookSpace";
 import { Preload } from "@react-three/drei";
-import { useBookTextures } from "./bookTextures";
 
 export default function Present() {
 
