@@ -75,14 +75,7 @@ const pageMaterials = [
 
 type PageProps = {
   number: number;
-  front: {
-          image: Array<Image> | null,
-          lines: Array<Text> | null
-      };
-  back: {
-          image: Array<Image> | null,
-          lines: Array<Text> | null
-      };
+  textures: [THREE.CanvasTexture, THREE.CanvasTexture][];
   [key: string]: any;
 };
 
@@ -94,27 +87,8 @@ interface ImageData {
     height: number
 }
 
-const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
-    // ① URL 배열 분리
-    const frontUrls = front.image?.map(img => `/books/${img.name}`);
-    const backUrls  = back.image?.map(img  => `/books/${img.name}`);
+const Page = ({number, textures, page, opened, bookClosed}: PageProps) => {
 
-    // ② 각각 useTexture
-    let frontTextures = null;
-    let backTextures = null;
-    if(frontUrls){
-       frontTextures = useTexture(frontUrls);
-    }
-    if(backUrls){
-        backTextures  = useTexture(backUrls);
-    }
-
-    frontTextures?.map((value: THREE.Texture) => {
-        value.colorSpace = THREE.SRGBColorSpace
-    })
-    backTextures?.map((value: THREE.Texture) => {
-        value.colorSpace = THREE.SRGBColorSpace
-    })
     const group = useRef<THREE.Group>(null);
     const turnedAt = useRef(0);
     const lastOpened = useRef(opened);
@@ -136,43 +110,16 @@ const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
             }
         }
 
-        const frontImages: ImageData[] = []
-        const backImages: ImageData[] = [];
-        if(front.image && frontTextures){
-            for(let i = 0; i < front.image.length; i++){
-                frontImages.push({
-                    source: frontTextures[i].image as CanvasImageSource,
-                    x: front.image[i].x / 100,
-                    y: front.image[i].y / 100,
-                    width: front.image[i].width / 100,
-                    height: front.image[i].height / 100
-                })
-            }
-        }
-        if(back.image && backTextures){
-            for(let i = 0; i< back.image.length; i++){
-                backImages.push({
-                    source: backTextures[i].image as CanvasImageSource,
-                    x: back.image[i].x / 100,
-                    y: back.image[i].y / 100,
-                    width: back.image[i].width / 100,
-                    height: back.image[i].height / 100
-                })
-            }
-        }
-
-        const picture = createTexture(front.lines, frontImages);
-        const picture2 = createTexture(back.lines, backImages);
         const skeleton = new THREE.Skeleton(bones);
         const materials = [...pageMaterials, 
             new THREE.MeshStandardMaterial({
                 color: whiteColor,
-                map: picture,
+                map: textures[number][0],
                 roughness: 1
             }),
             new THREE.MeshStandardMaterial({
                 color: whiteColor,
-                map: picture2,
+                map: textures[number][1],
                 roughness: 1
             })
         ];
@@ -184,9 +131,7 @@ const Page = ({number, front, back, page, opened, bookClosed}: PageProps) => {
         mesh.bind(skeleton);
         return mesh;
 
-    }, [
-        frontTextures, backTextures,
-        front.image, back.image]);
+    }, []);
 
     useFrame((_, delta) => {
         if (skinnedMeshRef.current) {
@@ -288,14 +233,14 @@ function Book(){
 
     return (
         <group rotation-y={-Math.PI / 2}>
-            {pages.map((pageData, index) => (
+            {pages.map((_, index) => (
                 <Page 
                     key={index}
-                    page={delayedPage}
                     number={index}
+                    textures={texures}
+                    page={delayedPage}
                     opened={delayedPage > index}
                     bookClosed={delayedPage === 0 || delayedPage === pages.length}
-                    {...pageData}
                 />
             ))}
         </group>
