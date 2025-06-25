@@ -1,8 +1,7 @@
 import Image from 'next/image'
 import styles from '../page.module.css'
 
-import { Ref, RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { flushSync } from 'react-dom';
+import { RefObject, useEffect, useRef, useState } from 'react'
 import { converter} from 'culori'
 const toLch = converter('lch')
 
@@ -328,7 +327,7 @@ const Other: Array<Skill> = [
     //mongoDB
     {name: "mongoDB", url: "mongoDB.svg",
     description: "mongoDB는 대표적인 NoSQL 데이터베이스입니다.\n"+
-    "저장할 수 있는 데이터 타입이 유연하다는 장점과,\n다른 편리한 기능 덕분에"+
+    "저장할 수 있는 데이터 타입이 유연하다는 장점과,\n여러 편리한 기능 덕분에"+
     " 다양한 곳에 많이 사용됩니다.",
     proficiency: 47, theme: '#0DF205', graphColor: '#04BF33'},
     //oracle
@@ -511,7 +510,7 @@ const up = (e: PointerEvent) => {
       });
       sortAnimation(newList);
     }else if(order === 2){
-      const newList = [...Languages, ...Frameworks, ...Other].sort((a,b) => a.proficiency - b.proficiency)
+      const newList = [...Languages, ...Frameworks, ...Other].sort((a,b) => b.proficiency - a.proficiency)
       sortAnimation(newList)
     }
     

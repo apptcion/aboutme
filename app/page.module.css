@@ -78,23 +78,6 @@
   height: 100%;
 }
 
-/* PAST */
-.past .bg{
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  z-index: -1;
-  background: #fff5d8
-}
-
-.book_wrap{
-  position: relative;
-  top: calc((100vh - 65vh) / 2);
-  left: calc((100vw - 55vw) / 2);
-  width: 55vw;
-  height: 65vh;
-
-}
 
 /* PRESENT */
 .present .bg{
@@ -177,7 +160,7 @@
 .future{
   position: relative;
   height: 100vh;
-  background-color: black;
+  background: radial-gradient(#2f2a54, #232323 80%);
 }
 
 .future .display{
