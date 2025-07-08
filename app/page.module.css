@@ -1,3 +1,18 @@
+
+.shake{
+  animation: shake 0.6s 0.1s ease-in-out;
+  transform-origin: center;
+}
+
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-5px, 0) rotate(-1deg); }
+  40% { transform: translate(5px, 0) rotate(1deg); }
+  60% { transform: translate(-5px, 0) rotate(-1deg); }
+  80% { transform: translate(5px, 0) rotate(1deg); }
+  100% { transform: translate(0, 0); }
+}
+
 /* COMMON */
 .future[style*="display:none"] .card_wrap { visibility:hidden; }
 .present[style*="display:none"] canvas { visibility:hidden; }

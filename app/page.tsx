@@ -4,7 +4,7 @@ import {useEffect, useState } from 'react';
 import { useProgress } from '@react-three/drei';
 import Main from './component/Main';
 import styles from './page.module.css'
-
+//"0331": "next dev --turbopack",
 function GlobalLoader() {
   const { progress } = useProgress();
   return (

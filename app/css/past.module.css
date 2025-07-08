@@ -4,65 +4,12 @@
   height: 100vh;
   position: absolute;
   z-index: -1;
-  background: radial-gradient(white, #ffeeb9);
+  background: radial-gradient(#ffeeb9, black);
+
 }
 
-.book_wrap {
-  position: relative;
-  top: calc((100vh - 70vh) / 2);
-  left: calc((100vw - 103vh) / 2);
-  width: 103vh;
-  height: 70vh;
-  perspective: 2000px;
-}
-
-.paper {
-  position: absolute;
-  left: 50%;
-  display: flex;
-  flex-wrap: wrap;
-  height: 100%;
-  width: 50%;
-  transition: transform 1s ease;
-  transform-origin: left center;
-  transform-style: preserve-3d;
-  will-change: transform;
-
-  /* ✅ 기본 상태: 애니메이션용 rotateY + GPU 최적화용 translateZ */
-  transform: rotateY(0deg) translateZ(0);
-  contain: paint;
-}
-
-.read {
-  transform: rotateY(-180deg) translateZ(0);
-}
-
-.side {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-
-  /* ✅ GPU 승격 */
-  transform: rotateY(0deg) translateZ(0);
-  contain: paint;
-}
-
-.front,
-.back {
-  backface-visibility: hidden;
-}
-
-.paper.read .front {
-  pointer-events: none;
-}
-
-.front{
-    background: linear-gradient(to left, white, 90%, rgb(179, 179, 179))
-}
-
-.back {
-  background: linear-gradient(to right, white, 90%, rgb(179, 179, 179));
-  transform: rotateY(180deg);
+.past{
+    perspective: 1000px;
 }
 
 .next_btn,
@@ -70,7 +17,7 @@
   position: absolute;
   font-weight: bold;
   font-size: 2vh;
-  top: 50%;
+  top: 70%;
   transform: translateX(-50%) translateY(-50%);
   z-index: 100;
   cursor: pointer;
@@ -85,11 +32,11 @@
 }
 
 .prev_btn {
-  right: 80%;
+  left: 10%;
 }
 
 .next_btn {
-  left: 93%;
+  left: 90%;
 }
 
 .next_btn::after,
@@ -126,11 +73,52 @@
   transform: translateX(30%) scale(1.05);
 }
 
-.cover {
+
+.book_wrap {
+  position: absolute;
+  top: calc((100vh - 70vh)/2);
+  left: calc((100vw - 100vh) / 2);
+  transform: rotateX(0deg) translateZ(0);
+  width: 100vh;
+  height: 70vh;
+  transition: transform 0.5s;
+  transform-style: preserve-3d
+}
+
+.lie_down{
+  transform: rotateX(100deg) translateZ(-15vw);
+}
+
+.paper{
+  position: absolute; 
+  background-color: white;
+  width: 50%;
+  height: 100%;
+  left: 50%;
+  transform-origin: left;
+  transition: transform 1s;
+  transform-style: preserve-3d;
+  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.cover, .back_cover{
   background: #ffe7a5;
 }
 
-.title_wrap {
+.front, .back{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  backface-visibility: hidden;
+}
+.back{
+  transform: rotateY(180deg);
+  background-color: white;
+}
+
+.title_wrap{
   position: relative;
   width: 100%;
   height: 63%;
@@ -150,38 +138,79 @@
   align-items: center;
 }
 
-.page {
-  background-color: white;
+.stage{
+  border: solid 2px red;
+  position: relative;
+  left: calc((100vw - 100vh)/2);
+  height: 70vh;
+  width: 100vh;
+  perspective: 1000px;
+  overflow: hidden;
 }
 
-.back_cover {
-  background: #ffe7a5;
+.viberate{
+  animation: viberate 0.1s infinite;
+  transition: left 0.2s;
 }
 
-.dot{
+.removeAnime1_img{
+  animation: removeAnime1_img 1s forwards;
+}
+
+.removeAnime1_box{
+  animation: removeAnime1_box 1s forwards;
+}
+
+@keyframes removeAnime1_box {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-300%);
+  }
+}
+
+
+@keyframes removeAnime1_img {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(-360deg);
+  }
+}
+
+.support{
   position: absolute;
+  bottom: 0;
+  background-color: black; 
+}
+
+.text::before,
+.text::after,
+.left_support::before,
+.right_support::after,
+.center_support::before {
+  content: '';
+  position: absolute;
+  width: 2px; /* 선 굵기 */
+  height: 100vh; /* 화면 꼭대기까지 이어지게 */
+  top: -100vh; /* 위로 뻗음 */
   background-color: black;
-  border-radius: 100%;
-  width: 2vh;
-  height: 2vh;
 }
 
-.center{
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%)
+.center_support::before {
+  left: 46.5%;
 }
 
-.line_to_right, .line_to_left{
-  position: absolute;
-  width: 50%;
-  height: 0.7vh;
-  background-color: black;
-  top: 50%;
-  transform: translateY(-50%);
+.right_support::after{
+  left: calc(100% - 20px);
 }
 
-.line_to_right{
-  left: 50%;
+.text::before {
+  left: 20px;
+}
+
+.text::after {
+  right: 20px;
 }

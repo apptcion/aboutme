@@ -16,6 +16,12 @@ function FakePage() {
 export default function Main() {
   const [nowPage, setNowPage] = useState(0);
   const [initFinish, setInitFinish] = useState(false)
+  const [shaking, setShaking] = useState(false);
+
+  const triggerShake = () => {
+    setShaking(true);
+    setTimeout(() => setShaking(false), 1000); // 애니메이션 끝나면 제거
+  };
 
   useEffect(() => {
     for(let i = 2; i > -1; i--){
@@ -26,10 +32,14 @@ export default function Main() {
         }
       }, 200*(2-i));
     }
+
+    const shakeListener = () => triggerShake();
+    window.addEventListener('trigger-shake', shakeListener);
+    return () => window.removeEventListener('trigger-shake', shakeListener);
   },[])
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${shaking ? styles.shake : ''}`}>
       {!initFinish && <FakePage />}
       <header className={styles.header}>
         <div className={styles.menu_container}>
