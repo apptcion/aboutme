@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "../css/past.module.css";
-import { clear } from "console";
-import { main } from "framer-motion/client";
 
 class Text{
   constructor(
     public info: {
       x: number,y: number,
       content: string, size: string,
-      anime?: number, maintain?: number,
+      anime?: number, maintain?: Array<number>,
       fontWeight?: string, font?: string,
       appearDelay?: number,
       line? : Array<boolean> | number
@@ -22,7 +20,7 @@ class Diagram{
       color: string, type: string,
       size: Array<number> | number, 
       needSupport?: boolean,
-      maintain?: number,
+      maintain?: Array<number>,
       appearDelay?: number;
     },
   ){}
@@ -32,7 +30,7 @@ class Img{
   constructor(
     public info: {x: number, y: number,
       url: string, size: Array<number>,
-      needSupport?: boolean, maintain?: number,
+      needSupport?: boolean, maintain?: Array<number>,
       anime?: number,
       appearDelay?: number
     }
@@ -67,7 +65,7 @@ const pages: Array<Array<Text | Diagram | Img>> = [
     '어릴적에 저의 꿈은 타임머신을 만드는 것이었습니다.<br />\
     먼 시간이 지난 후에, <strong>어떤 미래가 펼쳐질지 너무 궁금했고</strong>, 그것을 보지 못한다는 것이 아쉬웠습니다.<br />\
     중학교 2학년, 제 꿈은 <strong>먼 미래에 존재할 기술을 직접 만드는 것이 되었습니다.</strong> <br />',
-     size: '2vh', anime: 2, appearDelay: 1000}),
+     size: '2vh',anime: 5, appearDelay: 1000}),
     new Img({x: 45, y: 5, url: 'moon.jpg', size: [50,50]}),
   ],[
     new Text({x: 10, y: 33, content: 
@@ -81,10 +79,11 @@ const pages: Array<Array<Text | Diagram | Img>> = [
   [
     new Text({x: 7, y: 40, content:'조금 진부한 표현일 수 있지만<br />\
       그것을 가장 잘 나타내는 단어는 <strong>갈림길</strong>인 것 같습니다.', size: '3vh'}),
-    new Img({x: 75, y: 42, url: 'arrow1.png', size: [15, 20], maintain: 2}),
+    new Img({x: 75, y: 42, url: 'arrow1.png', size: [15, 20], maintain: [7,9]}),
     new Img({x: 60, y: 55, url: 'arrow2.png', size: [28, 20]}),
   ],[
     new Text({x: 12, y: 42, content: '일반적인 길을 선택한다면...', size: '3vh', fontWeight: 'bold'}),
+    new Img({x: 75, y: 42, url: 'arrow1.png', size: [15, 20], maintain: [7,9]}),
     new Text({x: 12, y: 45, content: 
           '고등학교 3년, 대학교 4년과 군대 1년<br/>\
           <strong>총 8년 동안</strong> 제가 하고싶은 일에 집중할 수 없었습니다.<br/>\
@@ -92,6 +91,7 @@ const pages: Array<Array<Text | Diagram | Img>> = [
           저는 제 <strong>고등학교 3년을 공부만하며 보내고 싶지 않았습니다.</strong>', size: '2vh', line: [false, true]}),
   ],[
     new Img({x: 60, y: 55, url: 'arrow2.png', size: [28, 20]}),
+    new Img({x: 75, y: 42, url: 'arrow1.png', size: [15, 20], maintain: [7,9]}),
     new Text({x: 7, y: 42, content: '새로운 길을 선택한다면...', size: '3vh', fontWeight: 'bold'}),
     new Text({x: 7, y: 47, content: 
           '고등학교 3년간 <strong>원하는 일을 할 수 있을 것이고,</strong><br/>\
@@ -99,14 +99,47 @@ const pages: Array<Array<Text | Diagram | Img>> = [
           평범한 길보다는 <strong>저의 꿈에 더 가까워지는 길이라고 느껴졌습니다.</strong>'
           , size: '2vh', line: [false, true]}),
   ],[
-    // new Img({x: 50, y: 45, url: 'trip.png', size: [40,40]}),ㄴ
-    new Text({x: 5,y: 20, content: '<div style="font-size: 2vh">2024, 중학교 3학년</div>\
+    new Text({x: 5,y: 20, content: '<div style="font-size: 2vh">2023, 중학교 3학년</div>\
       디미고에 진학하기로 한 뒤,<br/>\
-      포트폴리오 제출을 위한 <strong>저의 첫 프로젝트</strong>를<br/>\
-      구상하기 시작했습니다.', size: '2.5vh', anime: 0}),
-    new Text({x: 5,y: 45, content: 'Spring을 사용하여, 약 6개월의 기간동안 진행하였습니다.\
-      HTML, CSS, JS처럼 기본적인 웹 기술과 API, 비동기처리와 같은 \
-      단순한 프로그래밍에서 진짜 개발로 넘어가는 계기가 되었습니다.', size: '2.5vh', anime: 0, line: [false, true]}),
+      포트폴리오 제출을 위한 <strong>저의 첫 프로젝트</strong>를 구상하기 시작했습니다.', size: '2.5vh', anime: 0}),
+    new Text({x: 5,y: 37, content: 
+      '프로젝트의 진행을 위해 NGINX, SQL, JWT 등 개발에 필요한 <strong>다양한 기술을 익혔습니다.</strong><br/>\
+      단순한 프로그래밍에서 <strong>개발이라는 단계로 넘어가는 계기였고, </strong>당시의 경험과 기술은 <br/>\
+      <strong>지금의 저를 만드는 기반이 되었습니다.</strong>', size: '2.5vh', anime: 0, line: [false, true]}),
+    new Img({x: 65, y: 58, url: 'graph.png', size: [21,30]})
+  ],[
+    new Text({x: 15,y: 40, content: '<div style="font-size: 2vh">2025, 고등학교 1학년</div>\
+      디미고에 진학하여 지난 1년간 <strong>다양한 수업을 들었습니다.</strong> <br/>\
+      그리고 점점 <strong>더 명확한 꿈을 가지게 되었습니다.</strong>', size: '3vh', anime: 0}),
+  ],[
+    new Text({x: 33, y: 50, content: 'Ch 3. 미래의 나', 
+      size: '5vh', anime: 1, fontWeight: 'bold'})
+  ],[
+    new Text({x: 23, y: 39, content: 
+      '개발을 배우는 과정이 <strong>재밌었고</strong>, 새로운 것을 만드는 것이 <strong>즐거웠으며</strong>',
+      size: '2vh', anime: 0}),
+    new Text({x: 35.8, y: 44, content: '<strong>이 길을 나아간 저는 행복할 것 같기에</strong>',
+      size: '2vh', fontWeight: 'bold',line: [false, false]}),
+    new Text({x: 13, y: 54, content: `<div class=${styles.sub}>IT/정보통신 산업군의</div>저는 <strong>응용소프트웨어 개발자</strong>가 되고 싶습니다.`,
+       size: '4vh', anime: 0, fontWeight: 'bold'}),
+  ],[
+    new Text({x: 7, y: 45, content: '저의 목표에 다가가기 위해', size: '2.5vh'}),
+    new Text({x: 7, y: 50, content: '다양한 경험을 하고, 여러 역량을 길렀습니다.', size: '2.5vh', fontWeight: 'bold', line: [false, true]}),
+    new Text({x: 55, y: 65, content: '앞으로도 계속해서 <strong>새로운 것을 배우고 싶습니다.</strong>', size: '2vh'}),
+    new Img({x: 25, y: 73, url: 'road.png', size: [50, 10]})
+  ],[
+    new Text({x: 10, y: 42, content: '단순히 여러 내용을 배우는 것만 해온 것은 아닙니다.', anime: 3, size: '3vh'}),
+    new Text({x: 10, y: 47, content: '지금까지 배운 내용을 활용하여 <strong>여러 프로젝트를 진행해왔습니다.</strong>',
+       size: '3vh', anime: 3, line: [false, true]}),
+    new Text({x: 10, y: 53, content: 
+      '개발자로서, 기획자로서, 팀원으로서, 그리고 팀장으로서의 <strong>경험을 통해</strong> <br/>\
+      개발 능력 외에도, <strong>소통, 갈등관리, 책임감 같은 다양한 능력들을 기를 수 있었습니다.</strong><br/> \
+      <strong>배움에 대한 흥미, 다양한 기술, 많은 경험</strong>이 저의 장점입니다.<br />\
+      더 멀리 계속해서 나아가고 싶습니다.',
+       size: '2vh', appearDelay: 0, anime: 5, line: [false, false]})
+  ],[
+    new Text({x: 45, y: 61, content: 'END', 
+      size: '5vh', anime: 1, fontWeight: 'bold', line: [false, false]}),
   ]]
 
 export default function Present() {
@@ -137,12 +170,12 @@ const clearStage = (type: number) => {
     clearTimeout(anime);
   });
   onStage.current.forEach((element) => {
-    const maintainStr = element.getAttribute('data-maintain');
-    let maintain = Number(maintainStr);
-    if(isNaN(maintain)) maintain = 0;
-    const appear = Number(element.getAttribute('appear'));
-
-    if ((type === 1 && page+1 > appear + maintain) || (type === 0 && page-1 < appear)) {
+    const maintainStr = element.getAttribute('maintain');
+    console.log(maintainStr);
+    let maintain = JSON.parse(maintainStr || '[]');
+// (type === 1 && (page < maintain[0] || page > maintain[1])) || (type === 0 && page-1 < maintain)
+    console.log(page)
+    if (page+1 < maintain[0] || page+1 > maintain[1]) {
       element.style.transition = 'transform 0.8s';
       if (element instanceof HTMLParagraphElement) {
         element.style.transition = 'transform 0.5s';
@@ -179,15 +212,28 @@ const clearStage = (type: number) => {
   const drawStage = () => {
     const screenRatio = 10/7;
     const data = pages[page-1];
-    data.forEach((object) => {
-      if(!forward.current){
-        if(object.info.maintain !== undefined && object.info.maintain > 0){
-           return;
-        } // 유지되는 오브젝트는 그리기 안함
-      }
+    const object_id_list = onStage.current.map((element) => {return element.getAttribute('id')});
+    data.forEach((object, index) => {
+      let isExist = false;
+      object_id_list.forEach((id) => {
+        if(id === `${page}_${index}`){
+          isExist = true;
+          return;
+        }
+      });
+      if(isExist) return;
+      
+      const maintain = object.info.maintain || [page, page];
+      let prevPage;
+      if(forward.current)prevPage = page -1;
+      else prevPage = page + 1;
+      console.log(maintain, prevPage, page)
+      if(maintain[0] <= prevPage && prevPage <= maintain[1]) return;
+
       if(object instanceof Text){
         const newParagraph = document.createElement('p');
-        newParagraph.setAttribute('appear', String(page));
+        newParagraph.setAttribute('maintain', JSON.stringify(maintain));
+        newParagraph.setAttribute('id', `${page}_${index}`)
         if(object.info.line){
           if(object.info.line instanceof Array){
             if(object.info.line[0] && object.info.line[1]) newParagraph.classList.add(styles.text);
@@ -238,13 +284,13 @@ const clearStage = (type: number) => {
               // }, 2800)
               setTimeout(() => {  
                 newParagraph.style.transition = `transform 0.4s ease`;        
-                newParagraph.style.transform = `translateY(500%)`;
+                newParagraph.style.transform = `translateY(600%)`;
                 window.dispatchEvent(new Event('trigger-shake'));
-              }, 1600); // 3600
+              }, 2000); // 3600
               setTimeout(() => {    
                 newParagraph.style.transition = `transform 2s`;      
                 newParagraph.style.transform = `translateY(40%)`;
-              }, 2500); // 4500
+              }, 2900); // 4500
             }else if(object.info.anime === 3){ // 천천히 내려옴
               newParagraph.style.transform = `translateY(-${100 * (object.info.y)}%)`;
               newParagraph.style.transition = `transform 0.6s ease-out`;
@@ -272,8 +318,8 @@ const clearStage = (type: number) => {
                 newParagraph.style.transform = `translateY(40%)`;
               }, 2400);
               setTimeout(() => {
-                newParagraph.style.transition = `transform 0.5s ease`;
-                newParagraph.style.transform = `translateY(380%)`;
+                newParagraph.style.transition = `transform 0.3s ease`;
+                newParagraph.style.transform = `translateY(400%)`;
               }, 3800);
               setTimeout(() => {
                 let to = 0.05;
@@ -292,6 +338,12 @@ const clearStage = (type: number) => {
               setTimeout(() => {
                 clearInterval(intervalId);
               }, 7500)
+            }else if(object.info.anime === 5){ // 오랫동안 내리기
+              newParagraph.style.transform = `translateY(-${100 * (object.info.y)}%)`;
+              newParagraph.style.transition = `transform 1s`;
+              setTimeout(() => {          
+                newParagraph.style.transform = `translateY(40%)`;
+              }, 100)
             }else{ // 그냥 내려옴
               newParagraph.style.transform = `translateY(-${100 * (object.info.y)}%)`;
               newParagraph.style.transition = `transform 0.6s ease-out`;
@@ -304,7 +356,9 @@ const clearStage = (type: number) => {
 
       }else if(object instanceof Diagram){
         const newDivBox = document.createElement('div');
-        newDivBox.setAttribute('appear', String(page));
+        newDivBox.setAttribute('maintain',object.info.maintain ? JSON.stringify(object.info.maintain) : `[${page},${page}]`);
+
+        newDivBox.setAttribute('id', `${page}_${index}`)
         newDivBox.style.position = 'absolute';
         newDivBox.style.height = `100%`;
         newDivBox.style.top = '0';
@@ -352,7 +406,9 @@ const clearStage = (type: number) => {
         )
       }else if(object instanceof Img){
         const newDivBox = document.createElement('div');
-        newDivBox.setAttribute('appear', String(page));
+        newDivBox.setAttribute('maintain',object.info.maintain ? JSON.stringify(object.info.maintain) : `[${page},${page}]`);
+                console.log(object.info.maintain)
+        newDivBox.setAttribute('id', `${page}_${index}`);
         newDivBox.style.position = 'absolute';
         newDivBox.style.height = `100%`;
         newDivBox.style.width = `${object.info.size[0]}%`
@@ -421,7 +477,6 @@ const clearStage = (type: number) => {
       <div className={styles.next_btn} onClick={toNext}> ❯ </div>
       <div className={styles.prev_btn} onClick={toPrev}> ❮ </div>
       <div className={`${styles.stage}`} ref={stageRef} />
-
       <div className={styles.book_wrap} ref={bookWrapRef}>
         <div key={0} className={`${styles.cover} ${styles.paper}`}
           style={{
@@ -429,13 +484,13 @@ const clearStage = (type: number) => {
             zIndex: `${pages.length+1}`}}>
           <div className={styles.front}>
             <div className={`${styles.title_wrap}`}>
-              <div className={`${styles.title}`}>TITLE</div>
+              <div className={`${styles.title}`}>My Story</div>
             </div>
           </div>
           <div className={`${styles.back}`} />
         </div>
         {pages.map((_,index) => {
-          let rotated = page > index+1 ? 180 - ((index+1)*1) : 1*(pages.length-index-1)
+          let rotated = page > index+1 ? 180 - ((index+1)*0.4) : 0.4*(pages.length-index-1)
           if(!opened) rotated = 0
           return <div key={index+1} className={`${styles.paper}`}
               style={{
@@ -445,7 +500,7 @@ const clearStage = (type: number) => {
         })}
         <div key={pages.length+1} className={`${styles.paper}`}
           style={{
-            transform: `${page == pages.length+2 ? `rotateY(-${180 - (pages.length+1)*1}deg)` : ''}`,
+            transform: `${page == pages.length+2 ? `rotateY(-${180 - (pages.length+1)*0.4}deg)` : ''}`,
             zIndex: `${0}`}} >
         </div>
       </div>
