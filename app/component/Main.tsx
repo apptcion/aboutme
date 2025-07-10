@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Past    from '../component/Past';
 import Present from '../component/Present';
 import Future  from '../component/Future';
@@ -17,6 +17,7 @@ export default function Main() {
   const [nowPage, setNowPage] = useState(0);
   const [initFinish, setInitFinish] = useState(false)
   const [shaking, setShaking] = useState(false);
+  const fadeRef = useRef<HTMLTableSectionElement>(null);
 
   const triggerShake = () => {
     setShaking(true);
@@ -38,6 +39,20 @@ export default function Main() {
     return () => window.removeEventListener('trigger-shake', shakeListener);
   },[])
 
+const changePage = (page: number) => {
+  if (fadeRef.current) {
+    fadeRef.current.style.transition = 'background-color 0.5s ease-in-out';
+    fadeRef.current.style.backgroundColor = 'rgba(0,0,0,1)';
+  }
+
+  setTimeout(() => {
+    setNowPage(page);
+    if (fadeRef.current) {
+      fadeRef.current.style.backgroundColor = 'rgba(0,0,0,0)';
+    }
+  }, 500); // 페이지 변경 후에 배경 페이드아웃
+};
+
   return (
     <div className={`${styles.page} ${shaking ? styles.shake : ''}`}>
       {!initFinish && <FakePage />}
@@ -46,13 +61,14 @@ export default function Main() {
           {['my story', 'projects', 'skill'].map((t,i)=>(
             <div key={i}
                  className={`${styles.menu} ${nowPage===i?styles.selected:''}`}
-                 onClick={()=>setNowPage(i)}>
+                 onClick={()=> changePage(i)}>
               {t}
             </div>
           ))}
         </div>
       </header>
       <main className={styles.main}>
+        <section className={styles.fade} ref={fadeRef}/>
         <section style={{display: nowPage===0?'block':'none'}}><Past    /></section>
         <section style={{display: nowPage===1?'block':'none'}}><Present /></section>
         <section style={{display: nowPage===2?'block':'none'}}><Future  /></section>
